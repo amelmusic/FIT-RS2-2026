@@ -1,6 +1,6 @@
 namespace eCommerce.Model.SearchObjects
 {
-    public class CategorySearch
+    public class CategorySearchObject : BaseSearchObject
     {
         /// <summary>
         /// Substring to match against the category name (case-insensitive).

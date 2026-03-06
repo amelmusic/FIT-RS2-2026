@@ -4,7 +4,9 @@ using eCommerce.Model.SearchObjects;
 
 namespace eCommerce.Services
 {
-    public interface ICategoryService : IBaseCRUDService<CategoryResponse, CategorySearch, CategoriesInsertRequest, CategoriesUpdateRequest>
+    public interface ICategoryService : IBaseCRUDService<CategoryResponse, CategorySearchObject, CategoriesInsertRequest, CategoriesUpdateRequest>
     {
+        Task<CategoryResponse> ExceptionTestingInsertAsync(CategoriesInsertRequest request);
+
     }
 }

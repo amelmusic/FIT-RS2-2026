@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using eCommerce.Services;
+using eCommerce.Model.SearchObjects;
 
 namespace eCommerce.WebAPI.Controllers;
 
@@ -13,9 +14,9 @@ namespace eCommerce.WebAPI.Controllers;
 /// <typeparam name="TService">The service interface type implementing CRUD operations</typeparam>
 [ApiController]
 [Route("[controller]")]
-public abstract class BaseCRUDController<TResponse, TSearch, TInsertRequest, TUpdateRequest, TService> 
+public abstract class BaseCRUDController<TResponse, TSearch, TInsertRequest, TUpdateRequest, TService>
     : BaseReadController<TResponse, TSearch, TService>
-    where TSearch : class
+    where TSearch : BaseSearchObject
     where TService : IBaseCRUDService<TResponse, TSearch, TInsertRequest, TUpdateRequest>
 {
     protected BaseCRUDController(TService service) : base(service)
