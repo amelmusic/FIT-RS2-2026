@@ -7,6 +7,7 @@ using eCommerce.WebAPI.Filters;
 using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,22 +18,34 @@ builder.Services.AddControllers(
    options => options.Filters.Add<ExceptionFilter>()
 );
 
+// Add Entity Framework Core DbContext
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ECommerceDbContext>(options =>
+    options.UseSqlServer(connectionString)
+);
+
 // register Mapster for object mapping
 builder.Services.AddMapster();
 
 // configure a few mappings explicitly if needed (optional)
 // Mapster will automatically map same-named properties, but configuration
 // ensures any custom rules or future needs can be added here.
-TypeAdapterConfig<Product, ProductResponse>.NewConfig();
-TypeAdapterConfig<Category, CategoryResponse>.NewConfig();
+TypeAdapterConfig<Product, ProductResponse>.NewConfig().IgnoreNullValues(true);
+TypeAdapterConfig<Category, CategoryResponse>.NewConfig().IgnoreNullValues(true);
+TypeAdapterConfig<User, UserResponse>.NewConfig().IgnoreNullValues(true);
+TypeAdapterConfig<UserUpdateRequest, User>.NewConfig().IgnoreNullValues(true);
 
 // register application services
 builder.Services.AddScoped<IProductService, ProductService>();
 // category service
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+// user service
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IValidator<CategoriesInsertRequest>, CategoryInsertValidator>();
 builder.Services.AddScoped<IValidator<CategoriesUpdateRequest>, CategoryUpdateValidator>();
+builder.Services.AddScoped<IValidator<UserInsertRequest>, UserInsertValidator>();
+builder.Services.AddScoped<IValidator<UserUpdateRequest>, UserUpdateValidator>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
