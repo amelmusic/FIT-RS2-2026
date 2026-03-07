@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using eCommerce.Services;
+using eCommerce.Model.SearchObjects;
+using eCommerce.Model.Responses;
 
 namespace eCommerce.WebAPI.Controllers;
 
@@ -12,7 +14,7 @@ namespace eCommerce.WebAPI.Controllers;
 [ApiController]
 [Route("[controller]")]
 public abstract class BaseReadController<TResponse, TSearch, TService> : ControllerBase
-    where TSearch : class
+    where TSearch : BaseSearchObject
     where TService : IBaseReadService<TResponse, TSearch>
 {
     protected readonly TService _service;
@@ -23,7 +25,7 @@ public abstract class BaseReadController<TResponse, TSearch, TService> : Control
     }
 
     [HttpGet]
-    public async Task<IEnumerable<TResponse>> GetAll([FromQuery] TSearch? search)
+    public async Task<PageResult<TResponse>> GetAll([FromQuery] TSearch? search)
     {
         var results = await _service.GetAllAsync(search);
         return results;

@@ -7,7 +7,7 @@ using eCommerce.Services.Database;
 
 namespace eCommerce.Services;
 
-public class ProductService : BaseReadService<Product, ProductResponse, ProductSearch>, IProductService
+public class ProductService : BaseReadService<Product, ProductResponse, ProductSearchObject>, IProductService
 {
     // In-memory dummy product collection
     private static readonly List<Product> _dummyProducts = new()
@@ -65,7 +65,7 @@ public class ProductService : BaseReadService<Product, ProductResponse, ProductS
         return _dummyProducts;
     }
 
-    protected override IEnumerable<Product> ApplyFilters(IEnumerable<Product> query, ProductSearch? search)
+    protected override IEnumerable<Product> ApplyFilters(IEnumerable<Product> query, ProductSearchObject? search)
     {
         if (search != null)
         {
@@ -84,5 +84,17 @@ public class ProductService : BaseReadService<Product, ProductResponse, ProductS
         }
 
         return query;
+    }
+
+    public Task<ProductResponse> GetWithMaxNameAsync(ProductSearchObject? search = null)
+    {
+        IEnumerable<Product> query = GetDataSource();
+        query = ApplyFilters(query, search);
+
+        var productWithMaxName = query.OrderByDescending(p => p.Name.Length).First();
+
+        var response = _mapper.Map<ProductResponse>(productWithMaxName);
+        return Task.FromResult(response);
+
     }
 }

@@ -1,13 +1,23 @@
-using eCommerce.Services;
 using eCommerce.Model.Requests;
 using eCommerce.Model.Responses;
 using eCommerce.Model.SearchObjects;
+using eCommerce.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eCommerce.WebAPI.Controllers;
 
-public class CategoriesController : BaseCRUDController<CategoryResponse, CategorySearch, CategoriesInsertRequest, CategoriesUpdateRequest, ICategoryService>
+public class CategoriesController : BaseCRUDController<CategoryResponse, CategorySearchObject, CategoriesInsertRequest, CategoriesUpdateRequest, ICategoryService>
 {
     public CategoriesController(ICategoryService categoryService) : base(categoryService)
     {
+    }
+
+    [HttpPost("ExceptionTestingInsert")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<CategoryResponse>> ExceptionTestingInsert([FromBody] CategoriesInsertRequest request)
+    {
+        var result = await _service.ExceptionTestingInsertAsync(request);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 }

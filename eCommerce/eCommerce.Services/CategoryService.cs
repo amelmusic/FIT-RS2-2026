@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using eCommerce.Model.Exceptions;
 using eCommerce.Model.Requests;
 using eCommerce.Model.Responses;
 using eCommerce.Model.SearchObjects;
 using eCommerce.Services.Database;
+using FluentValidation;
 
 namespace eCommerce.Services
 {
-    public class CategoryService : BaseCRUDService<Category, CategoryResponse, CategorySearch, CategoriesInsertRequest, CategoriesUpdateRequest>, ICategoryService
+    public class CategoryService : BaseCRUDService<Category, CategoryResponse, CategorySearchObject, CategoriesInsertRequest, CategoriesUpdateRequest>, ICategoryService
     {
         // dummy in-memory collection with some hierarchical categories
         private static readonly List<Category> _dummyCategories = new()
@@ -49,7 +51,7 @@ namespace eCommerce.Services
             }
         };
 
-        public CategoryService(MapsterMapper.IMapper mapper) : base(mapper)
+        public CategoryService(MapsterMapper.IMapper mapper, IValidator<CategoriesInsertRequest> insertValidator, IValidator<CategoriesUpdateRequest> updateValidator) : base(mapper, insertValidator, updateValidator)
         {
         }
 
@@ -63,7 +65,7 @@ namespace eCommerce.Services
             return _dummyCategories;
         }
 
-        protected override IEnumerable<Category> ApplyFilters(IEnumerable<Category> query, CategorySearch? search)
+        protected override IEnumerable<Category> ApplyFilters(IEnumerable<Category> query, CategorySearchObject? search)
         {
             if (search != null)
             {
@@ -79,6 +81,33 @@ namespace eCommerce.Services
             }
 
             return query;
+        }
+
+        public Task<CategoryResponse> ExceptionTestingInsertAsync(CategoriesInsertRequest request)
+        {
+            if (request.Name.Length < 3)
+            {
+                throw new ClinetException("Category name must be at least 3 characters long.");
+            }
+
+            var entity = MapInsertRequestToEntity(request);
+
+            // Set the Id property
+            var entityType = entity.GetType();
+            var idProperty = entityType.GetProperty("Id");
+            idProperty?.SetValue(entity, GenerateNewId());
+
+            // Set CreatedAt if exists
+            var createdAtProperty = entityType.GetProperty("CreatedAt");
+            if (createdAtProperty?.CanWrite == true)
+            {
+                createdAtProperty.SetValue(entity, DateTime.UtcNow);
+            }
+
+            var dataSource = GetWritableDataSource();
+            dataSource.Add(entity);
+
+            return Task.FromResult(_mapper.Map<CategoryResponse>(entity));
         }
     }
 }

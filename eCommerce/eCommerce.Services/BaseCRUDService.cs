@@ -1,3 +1,6 @@
+using eCommerce.Model.SearchObjects;
+using FluentValidation;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +11,19 @@ namespace eCommerce.Services
     /// <summary>
     /// Generic base service for CRUD operations (Create, Read, Update, Delete)
     /// </summary>
-    public abstract class BaseCRUDService<TEntity, TResponse, TSearch, TInsertRequest, TUpdateRequest> 
+    public abstract class BaseCRUDService<TEntity, TResponse, TSearch, TInsertRequest, TUpdateRequest>
         : BaseReadService<TEntity, TResponse, TSearch>
         where TEntity : class
-        where TSearch : class
+        where TSearch : BaseSearchObject
     {
-        protected BaseCRUDService(MapsterMapper.IMapper mapper) : base(mapper)
+
+        private readonly IValidator<TInsertRequest> _insertValidator;
+        private readonly IValidator<TUpdateRequest> _updateValidator;
+
+        protected BaseCRUDService(MapsterMapper.IMapper mapper, IValidator<TInsertRequest> insertValidator, IValidator<TUpdateRequest> updateValidator) : base(mapper)
         {
+            _insertValidator = insertValidator;
+            _updateValidator = updateValidator;
         }
 
         /// <summary>
@@ -30,7 +39,7 @@ namespace eCommerce.Services
             var dataSource = GetWritableDataSource();
             if (dataSource.Count == 0)
                 return 1;
-            
+
             return dataSource.Max(e => (int)e.GetType().GetProperty("Id")?.GetValue(e)!) + 1;
         }
 
@@ -56,8 +65,15 @@ namespace eCommerce.Services
         /// </summary>
         public virtual async Task<TResponse> InsertAsync(TInsertRequest request)
         {
+            var validationResult = await _insertValidator.ValidateAsync(request);
+            if (validationResult.IsValid == false)
+            {
+                var errors = validationResult.Errors.Select(e => _mapper.Map<ValidationFailure>(e));
+                throw new FluentValidation.ValidationException(errors);
+            }
+
             var entity = MapInsertRequestToEntity(request);
-            
+
             // Set the Id property
             var entityType = entity.GetType();
             var idProperty = entityType.GetProperty("Id");
@@ -81,6 +97,13 @@ namespace eCommerce.Services
         /// </summary>
         public virtual async Task<TResponse> UpdateAsync(TUpdateRequest request)
         {
+            var validationResult = await _updateValidator.ValidateAsync(request);
+            if (validationResult.IsValid == false)
+            {
+                var errors = validationResult.Errors.Select(e => _mapper.Map<ValidationFailure>(e));
+                throw new FluentValidation.ValidationException(errors);
+            }
+
             var idProperty = typeof(TUpdateRequest).GetProperty("Id");
             if (idProperty == null)
                 throw new InvalidOperationException($"{typeof(TUpdateRequest).Name} must have an Id property.");
