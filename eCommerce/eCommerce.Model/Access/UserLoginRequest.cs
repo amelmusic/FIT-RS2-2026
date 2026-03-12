@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace eCommerce.Model.Requests
+namespace eCommerce.Model.Access
 {
     public class UserLoginRequest
     {
