@@ -1,21 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using eCommerce.Model.Access;
+using eCommerce.Model.Exceptions;
 using eCommerce.Model.Requests;
 using eCommerce.Model.Responses;
 using eCommerce.Model.SearchObjects;
 using eCommerce.Services.Database;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace eCommerce.Services
 {
     public class UserService : BaseCRUDService<User, UserResponse, UserSearch, UserInsertRequest, UserUpdateRequest>, IUserService
     {
-        public UserService(ECommerceDbContext dbContext, MapsterMapper.IMapper mapper, IValidator<UserInsertRequest> insertValidator, IValidator<UserUpdateRequest> updateValidator) 
+        public UserService(ECommerceDbContext dbContext, MapsterMapper.IMapper mapper, IValidator<UserInsertRequest> insertValidator, IValidator<UserUpdateRequest> updateValidator)
             : base(dbContext, mapper, insertValidator, updateValidator)
         {
         }
@@ -37,7 +39,7 @@ namespace eCommerce.Services
 
                 if (!string.IsNullOrWhiteSpace(search.Name))
                 {
-                    query = query.Where(u => u.FirstName.Contains(search.Name, StringComparison.OrdinalIgnoreCase) 
+                    query = query.Where(u => u.FirstName.Contains(search.Name, StringComparison.OrdinalIgnoreCase)
                                           || u.LastName.Contains(search.Name, StringComparison.OrdinalIgnoreCase));
                 }
 
@@ -150,6 +152,20 @@ namespace eCommerce.Services
 
             _dbContext.Users.Remove(entity);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<UserSensitveResponse> GetByUsernameAsync(string username)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+            if (user == null)
+            {
+                throw new ClinetException($"User with username '{username}' not found.");
+            }
+
+            var response = _mapper.Map<UserSensitveResponse>(user);
+
+            return response;
         }
     }
 }

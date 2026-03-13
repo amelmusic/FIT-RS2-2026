@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eCommerce.Services.Database;
 
@@ -11,9 +12,11 @@ using eCommerce.Services.Database;
 namespace eCommerce.Services.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    partial class ECommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260312082736_addSeed")]
+    partial class addSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -587,32 +590,6 @@ namespace eCommerce.Services.Migrations
                     b.ToTable("ProductTypes");
                 });
 
-            modelBuilder.Entity("eCommerce.Services.Database.RefreshToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshTokens");
-                });
-
             modelBuilder.Entity("eCommerce.Services.Database.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -1028,17 +1005,6 @@ namespace eCommerce.Services.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eCommerce.Services.Database.RefreshToken", b =>
-                {
-                    b.HasOne("eCommerce.Services.Database.User", "User")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eCommerce.Services.Database.UserRole", b =>
                 {
                     b.HasOne("eCommerce.Services.Database.Role", "Role")
@@ -1113,8 +1079,6 @@ namespace eCommerce.Services.Migrations
 
             modelBuilder.Entity("eCommerce.Services.Database.User", b =>
                 {
-                    b.Navigation("RefreshTokens");
-
                     b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
