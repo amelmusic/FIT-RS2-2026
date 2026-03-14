@@ -3,6 +3,7 @@ using eCommerce.Model.Requests;
 using eCommerce.Model.Responses;
 using eCommerce.Services;
 using eCommerce.Services.Database;
+using eCommerce.Services.ProductStateMachine;
 using eCommerce.Services.Validators;
 using eCommerce.WebAPI.Filters;
 using eCommerce.WebAPI.Services.AccessManager;
@@ -43,6 +44,11 @@ TypeAdapterConfig<UserUpdateRequest, User>.NewConfig().IgnoreNullValues(true);
 
 // register application services
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<BaseProductState>();
+builder.Services.AddScoped<InitialProductState>();
+builder.Services.AddScoped<DraftProductState>();
+builder.Services.AddScoped<ActiveProductState>();
+
 // category service
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 // user service
