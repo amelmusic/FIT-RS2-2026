@@ -110,11 +110,11 @@ namespace eCommerce.Services.QueryOptimization
 
         public async Task<List<ProductResponse>> UsingSqlQueries()
         {
-            var users = await _dbContext.Products
+            var products = await _dbContext.Products
                 .FromSqlRaw("SELECT * FROM Products as P WHERE P.Price > 300")
                 .ToListAsync();
 
-            var productResponses = users.Select(u => mapper.Map<ProductResponse>(u)).ToList();
+            var productResponses = products.Select(u => mapper.Map<ProductResponse>(u)).ToList();
 
             return productResponses;
         }
