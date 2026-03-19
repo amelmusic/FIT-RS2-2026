@@ -4,6 +4,7 @@ using eCommerce.Model.Responses;
 using eCommerce.Services;
 using eCommerce.Services.Database;
 using eCommerce.Services.ProductStateMachine;
+using eCommerce.Services.QueryOptimization;
 using eCommerce.Services.Validators;
 using eCommerce.WebAPI.Filters;
 using eCommerce.WebAPI.Services.AccessManager;
@@ -59,6 +60,8 @@ builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IAccessManager, AccessManager>();
 
 builder.Services.AddScoped<ICryptoService, CryptoService>();
+
+builder.Services.AddScoped<IQueryOptimizationService, QueryOptimizationService> ();
 
 builder.Services.AddScoped<IValidator<CategoriesInsertRequest>, CategoryInsertValidator>();
 builder.Services.AddScoped<IValidator<CategoriesUpdateRequest>, CategoryUpdateValidator>();
