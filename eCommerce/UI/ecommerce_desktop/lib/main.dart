@@ -1,8 +1,15 @@
+import 'package:ecommerce_desktop/providers/product_provider.dart';
 import 'package:ecommerce_desktop/screens/product_list.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=> ProductProvider()),
+      ],
+      child: const MyApp()));
 }
 
 
