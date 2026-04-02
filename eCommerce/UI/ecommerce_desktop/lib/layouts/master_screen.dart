@@ -1,4 +1,5 @@
 import 'package:ecommerce_desktop/screens/product_details_screen.dart';
+import 'package:ecommerce_desktop/screens/product_list.dart';
 import 'package:flutter/material.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class _MasterScreenState extends State<MasterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        centerTitle: true,
       ),
       drawer: Drawer(
         child: ListView(
@@ -38,8 +40,15 @@ class _MasterScreenState extends State<MasterScreen> {
               title: Text('Home'),
               onTap: () {
                 // Handle Home navigation
-                Navigator.pop(context);
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> testScreen("Home", "TODO add home screen")));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_basket),
+              title: Text('Products'),
+              onTap: () {
+                // Handle Home navigation
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductList()));
               },
             ),
             ListTile(
@@ -47,7 +56,7 @@ class _MasterScreenState extends State<MasterScreen> {
               title: Text('Cart'),
               onTap: () {
                 // Handle Cart navigation
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> testScreen("Cart", "TODO add cart screen")));
               },
             ),
             ListTile(
@@ -55,7 +64,7 @@ class _MasterScreenState extends State<MasterScreen> {
               title: Text('Profile'),
               onTap: () {
                 // Handle Profile navigation
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> testScreen("Profile", "TODO add profile screen")));
               },
             ),
             ListTile(
@@ -71,5 +80,13 @@ class _MasterScreenState extends State<MasterScreen> {
       ),
       body: widget.child,
       );
+  }
+
+  MasterScreen testScreen(String title, String content) {
+    return MasterScreen(
+      title: title,
+      child: Center(
+                child: Text(content),
+              ));
   }
 }
