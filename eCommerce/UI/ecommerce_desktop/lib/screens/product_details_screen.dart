@@ -1,6 +1,11 @@
 import 'package:ecommerce_desktop/layouts/master_screen.dart';
 import 'package:ecommerce_desktop/models/product.dart';
+import 'package:ecommerce_desktop/models/product_type.dart';
+import 'package:ecommerce_desktop/models/search_result.dart';
+import 'package:ecommerce_desktop/models/unit_of_measure.dart';
 import 'package:ecommerce_desktop/providers/product_provider.dart';
+import 'package:ecommerce_desktop/providers/product_type_provider.dart';
+import 'package:ecommerce_desktop/providers/unit_of_measure_provider.dart';
 import 'package:ecommerce_desktop/utils/utils_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -20,6 +25,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Map<String, dynamic> _initalValue = {};
 
   late ProductProvider _productProvider;
+  late ProductTypeProvider _productTypeProvider;
+  late UnitOfMeasureProvider _unitOfMeasureProvider;
+
+  bool isLoading = true;
+
+  SearchResult<UnitOfMeasure>? unitsOfMeasureResult;
+  SearchResult<ProductType>? productTypesResult;
 
   @override
   void initState() {
@@ -29,9 +41,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     _initalValue = {
       'name': widget.product?.name,
       'price': widget.product?.price.toString(),
+      'productTypeId': widget.product?.productTypeId,
+      'unitOfMeasureId': widget.product?.unitOfMeasureId
     };
 
     _productProvider = context.read<ProductProvider>();
+    _productTypeProvider = context.read<ProductTypeProvider>();
+    _unitOfMeasureProvider = context.read<UnitOfMeasureProvider>();
+
+    initForm();
+  }
+
+  Future initForm() async {
+    try {
+      var productTypes = await _productTypeProvider.get(filter: {});
+      var unitsOfMeasure = await _unitOfMeasureProvider.get(filter: {});
+
+      setState(() {
+        productTypesResult = productTypes;
+        unitsOfMeasureResult = unitsOfMeasure;
+        isLoading = false;
+      });
+      
+
+    } on Exception catch (e) {
+      alertBox(context, "Error", e.toString());
+    }
   }
 
   @override
@@ -64,8 +99,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           );
                 
                           request['price'] = price;
+                          print(request);
+
+                          print(widget.product!.productTypeId);
+                          print(_formKey.currentState!.value['productTypeId']);
                 
-                          await _productProvider.update(request);
+                          await _productProvider.update(widget.product!.id!, request);
                 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -108,7 +147,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  FormBuilder _buildForm() {
+  Widget _buildForm() {
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
     return FormBuilder(
       key: _formKey,
       initialValue: _initalValue,
@@ -147,6 +189,30 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
             ],
           ),
+          Row(
+            children: [
+              Expanded(
+                  child: FormBuilderDropdown(
+                name: "unitOfMeasureId",
+                decoration: InputDecoration(labelText: "Unit of Measure"),
+                items: unitsOfMeasureResult?.items
+                        ?.map((e) => DropdownMenuItem(
+                            value: e.id, child: Text(e.name!)))
+                        .toList() ??
+                    [],
+              )),
+              Expanded(
+                  child: FormBuilderDropdown(
+                name: "productTypeId",
+                decoration: InputDecoration(labelText: "Product Type"),
+                items: productTypesResult?.items
+                        ?.map((e) => DropdownMenuItem(
+                            value: e.id, child: Text(e.name!)))
+                        .toList() ??
+                    [],
+              ))
+            ],
+          )
         ],
       ),
     );

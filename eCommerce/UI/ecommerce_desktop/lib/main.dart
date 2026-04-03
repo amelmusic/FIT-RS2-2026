@@ -1,4 +1,7 @@
+import 'package:ecommerce_desktop/providers/auth_provider.dart';
 import 'package:ecommerce_desktop/providers/product_provider.dart';
+import 'package:ecommerce_desktop/providers/product_type_provider.dart';
+import 'package:ecommerce_desktop/providers/unit_of_measure_provider.dart';
 import 'package:ecommerce_desktop/screens/product_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +10,10 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_)=> AuthProvider()),
         ChangeNotifierProvider(create: (_)=> ProductProvider()),
+        ChangeNotifierProvider(create: (_)=> ProductTypeProvider()),
+        ChangeNotifierProvider(create: (_)=> UnitOfMeasureProvider()),
       ],
       child: const MyApp()));
 }
@@ -39,13 +45,15 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.blue),
       ),
-      home: const LoginScreen(),
+      home: LoginScreen(),
     );
   }
 }
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  LoginScreen({super.key});
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +76,16 @@ class LoginScreen extends StatelessWidget {
                     width: 100,
                     height: 100,),
                     TextField(
+                      controller: _usernameController,
                       decoration: InputDecoration(
                         labelText: "Username",
                       ),
                     ),
                     SizedBox(height: 16.0,),
                     TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+
                       decoration: InputDecoration(
                         labelText: "Password",
 
@@ -82,8 +94,15 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(height: 16.0,),
                     ElevatedButton(
                       child: Text("Login"),
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProductList()));
+                      onPressed: () async {
+
+                        AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+                        try {
+                          await authProvider.login(_usernameController.text, _passwordController.text);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductList()));
+                        } on Exception catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                        }
                         // Handle login logic here
                         print("Login button pressed");
                       },

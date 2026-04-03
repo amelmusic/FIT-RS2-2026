@@ -72,11 +72,15 @@ class _ProductListState extends State<ProductList> {
                   rows: result?.items
                   ?.map(
                     (e) => DataRow(
-                      onSelectChanged: (value) {
-                        Navigator.of(context)
+                      onSelectChanged: (value) async {
+                        var refresh = await Navigator.of(context)
                                 .push(MaterialPageRoute(
                               builder: (context) => ProductDetailsScreen(product: e),
                             ));
+                        
+                        if (refresh == "reload") {
+                          initTable();
+                        }
                       },
                       cells: [
                       DataCell(Text(e.name ?? '')),

@@ -42,6 +42,8 @@ TypeAdapterConfig<Product, ProductResponse>.NewConfig().IgnoreNullValues(true);
 TypeAdapterConfig<Category, CategoryResponse>.NewConfig().IgnoreNullValues(true);
 TypeAdapterConfig<User, UserResponse>.NewConfig().IgnoreNullValues(true);
 TypeAdapterConfig<UserUpdateRequest, User>.NewConfig().IgnoreNullValues(true);
+TypeAdapterConfig<ProductType, ProductTypeResponse>.NewConfig().IgnoreNullValues(true);
+TypeAdapterConfig<UnitOfMeasure, UnitOfMeasureResponse>.NewConfig().IgnoreNullValues(true);
 
 // register application services
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -52,6 +54,10 @@ builder.Services.AddScoped<ActiveProductState>();
 
 // category service
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+// product type service
+builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
+// unit of measure service
+builder.Services.AddScoped<IUnitOfMeasureService, UnitOfMeasureService>();
 // user service
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -63,6 +69,10 @@ builder.Services.AddScoped<ICryptoService, CryptoService>();
 
 builder.Services.AddScoped<IQueryOptimizationService, QueryOptimizationService> ();
 
+builder.Services.AddScoped<IValidator<ProductTypeInsertRequest>, ProductTypeInsertValidator>();
+builder.Services.AddScoped<IValidator<ProductTypeUpdateRequest>, ProductTypeUpdateValidator>();
+builder.Services.AddScoped<IValidator<UnitOfMeasureInsertRequest>, UnitOfMeasureInsertValidator>();
+builder.Services.AddScoped<IValidator<UnitOfMeasureUpdateRequest>, UnitOfMeasureUpdateValidator>();
 builder.Services.AddScoped<IValidator<CategoriesInsertRequest>, CategoryInsertValidator>();
 builder.Services.AddScoped<IValidator<CategoriesUpdateRequest>, CategoryUpdateValidator>();
 builder.Services.AddScoped<IValidator<UserInsertRequest>, UserInsertValidator>();
