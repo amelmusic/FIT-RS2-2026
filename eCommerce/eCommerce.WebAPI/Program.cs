@@ -44,6 +44,8 @@ TypeAdapterConfig<User, UserResponse>.NewConfig().IgnoreNullValues(true);
 TypeAdapterConfig<UserUpdateRequest, User>.NewConfig().IgnoreNullValues(true);
 TypeAdapterConfig<ProductType, ProductTypeResponse>.NewConfig().IgnoreNullValues(true);
 TypeAdapterConfig<UnitOfMeasure, UnitOfMeasureResponse>.NewConfig().IgnoreNullValues(true);
+TypeAdapterConfig<Asset, AssetResponse>.NewConfig().IgnoreNullValues(true);
+
 
 // register application services
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -61,6 +63,9 @@ builder.Services.AddScoped<IUnitOfMeasureService, UnitOfMeasureService>();
 // user service
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<IAssetService, AssetService>();
+
+
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
 builder.Services.AddScoped<IAccessManager, AccessManager>();
@@ -77,6 +82,8 @@ builder.Services.AddScoped<IValidator<CategoriesInsertRequest>, CategoryInsertVa
 builder.Services.AddScoped<IValidator<CategoriesUpdateRequest>, CategoryUpdateValidator>();
 builder.Services.AddScoped<IValidator<UserInsertRequest>, UserInsertValidator>();
 builder.Services.AddScoped<IValidator<UserUpdateRequest>, UserUpdateValidator>();
+builder.Services.AddScoped<IValidator<AssetInsertRequest>, AssetInsertValidator>();
+builder.Services.AddScoped<IValidator<AssetUpdateRequest>, AssetUpdateValidator>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

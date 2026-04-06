@@ -1,39 +1,39 @@
 import 'package:ecommerce_desktop/layouts/master_screen.dart';
-import 'package:ecommerce_desktop/models/product.dart';
 import 'package:ecommerce_desktop/models/search_result.dart';
-import 'package:ecommerce_desktop/providers/product_provider.dart';
-import 'package:ecommerce_desktop/screens/product_details_screen.dart';
+import 'package:ecommerce_desktop/providers/category_provider.dart';
 import 'package:ecommerce_desktop/utils/utils_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+import '../models/category.dart';
+
+class CategoryList extends StatefulWidget {
+  const CategoryList({super.key});
 
   @override
-  State<ProductList> createState() => _ProductListState();
+  State<CategoryList> createState() => _CategoryListState();
 }
 
-class _ProductListState extends State<ProductList> {
-  late ProductProvider _productProvider;
-  SearchResult<Product>? result;
+class _CategoryListState extends State<CategoryList> {
+  late CategoryProvider _categoryProvider;
+  SearchResult<Category>? result;
   bool isLoading = true;
 
-  TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    _productProvider = context.read<ProductProvider>();
+    _categoryProvider = context.read<CategoryProvider>();
 
     initTable();
   }
 
   Future<void> initTable() async {
     try {
-      var data = await _productProvider.get(filter: {});
+      var data = await _categoryProvider.get(filter: {});
 
       setState(() {
         result = data;
@@ -47,7 +47,7 @@ class _ProductListState extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
-      title: "Product List",
+      title: "Category List",
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -68,29 +68,26 @@ class _ProductListState extends State<ProductList> {
               child: DataTable(
                 columns: [
                   DataColumn(label: Text("Name")),
-                  DataColumn(label: Text("Weight")),
-                  DataColumn(label: Text("Price")),
-                  DataColumn(label: Text("Product State")),
-                  DataColumn(label: Text("Delete")),
+                  DataColumn(label: Text("Description")),
+                  DataColumn(label: Text("Is Active")),
                 ],
                   rows: result?.items
                   ?.map(
                     (e) => DataRow(
                       onSelectChanged: (value) async {
-                        var refresh = await Navigator.of(context)
-                                .push(MaterialPageRoute(
-                              builder: (context) => ProductDetailsScreen(product: e),
-                            ));
+                        // var refresh = await Navigator.of(context)
+                        //         .push(MaterialPageRoute(
+                        //       builder: (context) => ProductDetailsScreen(product: e),
+                        //     ));
                         
-                        if (refresh == "reload") {
-                          initTable();
-                        }
+                        // if (refresh == "reload") {
+                        //   initTable();
+                        // }
                       },
                       cells: [
                       DataCell(Text(e.name ?? '')),
-                      DataCell(Text(e.weight.toString())),
-                      DataCell(Text(e.price.toString())),
-                      DataCell(Text(e.productState ?? '')),
+                      DataCell(Text(e.description.toString())),
+                      DataCell(Text("e.isActive.toString() ")),
                       DataCell(
                         IconButton(
                           icon: Icon(Icons.delete),
@@ -99,7 +96,7 @@ class _ProductListState extends State<ProductList> {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: Text("Delete"),
-                                content: Text("Are you sure you want to delete this product?"),
+                                content: Text("Are you sure you want to delete this category?"),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -110,14 +107,14 @@ class _ProductListState extends State<ProductList> {
                                   ElevatedButton(
                                     onPressed: () async {
                                       try {
-                                        await _productProvider.remove(e.id!);
+                                        await _categoryProvider.remove(e.id!);
 
                                          ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
                                               SnackBar(
                                                 content: Text(
-                                                  "Product deleted successfully",
+                                                  "Category deleted successfully",
                                                 ),
                                               ),
                                             );
@@ -163,7 +160,7 @@ class _ProductListState extends State<ProductList> {
               ),
               ElevatedButton(onPressed: () async{
                    try {
-                        var data = await _productProvider.get(filter: {"name": _nameController.text});
+                        var data = await _categoryProvider.get(filter: {"name": _nameController.text});
 
                         setState(() {
                           result = data;
@@ -177,17 +174,17 @@ class _ProductListState extends State<ProductList> {
                 width: 10,
               ),
               ElevatedButton(onPressed: () async {
-                var refresh = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ProductDetailsScreen(
-                      product: null,
-                    )
-                  )
-                );
+                // var refresh = await Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => const ProductDetailsScreen(
+                //       product: null,
+                //     )
+                //   )
+                // );
 
-                if( refresh == "reload"){
-                  initTable();
-                }
+                // if( refresh == "reload"){
+                //   initTable();
+                // }
               }, child: Text("New")),
             ],
           ),

@@ -3,8 +3,12 @@ import 'package:ecommerce_desktop/providers/product_provider.dart';
 import 'package:ecommerce_desktop/providers/product_type_provider.dart';
 import 'package:ecommerce_desktop/providers/unit_of_measure_provider.dart';
 import 'package:ecommerce_desktop/screens/product_list.dart';
+import 'package:ecommerce_desktop/utils/utils_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'providers/asset_provider.dart';
+import 'providers/category_provider.dart';
 
 void main() {
   runApp(
@@ -14,6 +18,8 @@ void main() {
         ChangeNotifierProvider(create: (_)=> ProductProvider()),
         ChangeNotifierProvider(create: (_)=> ProductTypeProvider()),
         ChangeNotifierProvider(create: (_)=> UnitOfMeasureProvider()),
+        ChangeNotifierProvider(create: (_)=> AssetProvider()),
+        ChangeNotifierProvider(create: (_)=> CategoryProvider()),
       ],
       child: const MyApp()));
 }
@@ -52,8 +58,8 @@ class MyApp extends StatelessWidget {
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +107,7 @@ class LoginScreen extends StatelessWidget {
                           await authProvider.login(_usernameController.text, _passwordController.text);
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ProductList()));
                         } on Exception catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                          alertBox(context, "Error", e.toString());
                         }
                         // Handle login logic here
                         print("Login button pressed");
@@ -135,21 +141,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      // _counter++;
-    });
-
-    _counter++;
-    print(_counter);
-  }
 
   @override
   Widget build(BuildContext context) {
