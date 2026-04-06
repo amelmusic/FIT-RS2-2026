@@ -70,6 +70,7 @@ class _CategoryListState extends State<CategoryList> {
                   DataColumn(label: Text("Name")),
                   DataColumn(label: Text("Description")),
                   DataColumn(label: Text("Is Active")),
+                  DataColumn(label: Text("Delete")),
                 ],
                   rows: result?.items
                   ?.map(
@@ -87,7 +88,7 @@ class _CategoryListState extends State<CategoryList> {
                       cells: [
                       DataCell(Text(e.name ?? '')),
                       DataCell(Text(e.description.toString())),
-                      DataCell(Text("e.isActive.toString() ")),
+                      DataCell(Text(e.isActive.toString() )),
                       DataCell(
                         IconButton(
                           icon: Icon(Icons.delete),

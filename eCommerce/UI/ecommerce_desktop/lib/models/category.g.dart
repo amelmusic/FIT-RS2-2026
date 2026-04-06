@@ -9,7 +9,7 @@ part of 'category.dart';
 Category _$CategoryFromJson(Map<String, dynamic> json) => Category(
   id: (json['id'] as num?)?.toInt(),
   name: json['name'] as String?,
-  description: (json['description'] as num?)?.toDouble(),
+  description: json['description'] as String?,
   isActive: json['isActive'] as bool?,
 );
 
