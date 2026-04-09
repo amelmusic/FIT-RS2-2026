@@ -76,6 +76,20 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
+  Future remove(int id) async {
+    var url = "$_baseUrl$_endpoint/$id";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.delete(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      return;
+    } else {
+      throw new Exception("Unknown error");
+    }
+  }
+
   T fromJson(data) {
     throw Exception("Method not implemented");
   }
@@ -125,7 +139,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
         }
         query += '$prefix$key=$encoded';
       } else if (value is DateTime) {
-        query += '$prefix$key=${(value as DateTime).toIso8601String()}';
+        query += '$prefix$key=${value.toIso8601String()}';
       } else if (value is List || value is Map) {
         if (value is List) value = value.asMap();
         value.forEach((k, v) {
