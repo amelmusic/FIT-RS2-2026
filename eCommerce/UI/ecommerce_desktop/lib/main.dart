@@ -1,5 +1,6 @@
 import 'package:ecommerce_desktop/providers/auth_provider.dart';
 import 'package:ecommerce_desktop/providers/product_provider.dart';
+import 'package:ecommerce_desktop/providers/product_review_provider.dart';
 import 'package:ecommerce_desktop/providers/product_type_provider.dart';
 import 'package:ecommerce_desktop/providers/unit_of_measure_provider.dart';
 import 'package:ecommerce_desktop/screens/product_list.dart';
@@ -22,6 +23,7 @@ void main() {
         ChangeNotifierProvider(create: (_)=> AssetProvider()),
         ChangeNotifierProvider(create: (_)=> CategoryProvider()),
         ChangeNotifierProvider(create: (_)=> UserProvider()),
+        ChangeNotifierProvider(create: (_)=> ProductReviewProvider()),
       ],
       child: const MyApp()));
 }

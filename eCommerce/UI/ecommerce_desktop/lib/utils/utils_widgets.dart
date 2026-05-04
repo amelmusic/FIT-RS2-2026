@@ -42,6 +42,7 @@ Image imageFromBase64String(String base64Image) {
     base64Decode(base64Image),
     height: 400,
     width: 400,
+    fit: BoxFit.cover,
   );
 }
 
