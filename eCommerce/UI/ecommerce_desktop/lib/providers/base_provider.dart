@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:ecommerce_desktop/providers/auth_provider.dart';
 import 'package:http/http.dart';
 
+import '../utils/api_client_exception.dart';
+
 abstract class BaseProvider<T> with ChangeNotifier {
   static String? _baseUrl;
   String _endpoint = "";
@@ -42,6 +44,21 @@ abstract class BaseProvider<T> with ChangeNotifier {
       throw new Exception("Unknown error");
     }
     // print("response: ${response.request} ${response.statusCode}, ${response.body}");
+  }
+
+  Future<T> getById(int id) async {
+    var url = "$_baseUrl$_endpoint/$id";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    http.Response response = await http.get(uri, headers: headers);
+    print(
+      "response: ${response.request} ${response.statusCode}, ${response.body}",
+    );
+    validateResponse(response);
+    var data = jsonDecode(response.body);
+
+    return fromJson(data);
   }
 
   Future<T> insert(dynamic request) async {
@@ -103,6 +120,30 @@ abstract class BaseProvider<T> with ChangeNotifier {
       print(response.body);
       throw new Exception("Something bad happened please try again");
     }
+  }
+
+  /// Throws [ApiClientException] with a message from the API when status is not successful.
+  void validateResponse(Response response) {
+    if (response.statusCode < 299) {
+      return;
+    }
+    if (response.statusCode == 401) {
+      throw ApiClientException(
+        'Your session has expired. Please sign in again.',
+      );
+    }
+
+    final parsed = ApiErrorParser.messageFromBody(response.body);
+    if (response.statusCode >= 500) {
+      throw ApiClientException(
+        parsed ?? 'Server error. Please try again later.',
+      );
+    }
+
+    // 400 Bad Request — business rules (ClinetException), validation, etc.
+    throw ApiClientException(
+      parsed ?? 'Request could not be completed. Please try again.',
+    );
   }
 
   Map<String, String> createHeaders() {
