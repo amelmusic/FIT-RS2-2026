@@ -124,14 +124,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   SizedBox _buildAssetList() {
-     List<Asset> allAssets = [];
+    List<Asset> allAssets = [];
 
-     // Add existing assets
+    // Add existing assets
     if (assetsResult?.items != null) {
       allAssets.addAll(assetsResult!.items!);
     }
 
-     // Add newly selected assets
+    // Add newly selected assets
     allAssets.addAll(newAssets);
 
     return SizedBox(
@@ -141,14 +141,83 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         // allows all devices to drag the list.
         behavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {...PointerDeviceKind.values},
-        ),  
+        ),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: allAssets.length,
           itemBuilder: (context, index) => SizedBox(
             width: 200,
-            child: imageFromBase64String(
-              allAssets[index].base64Content!,
+            child: Stack(
+              children: [
+                imageFromBase64String(allAssets[index].base64Content!),
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: IconButton(
+                    onPressed: () {
+                      if(allAssets[index].id != null && allAssets[index].id! > 0){
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text("Delete"),
+                            content: Text(
+                              "Are you sure you want to delete this asset?",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Cancel"),
+                              ),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  try {
+                                    _assetProvider.remove(allAssets[index].id!);
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "Asset deleted successfully",
+                                        ),
+                                      ),
+                                    );
+
+                                    Navigator.pop(context);
+
+                                    setState(() {
+                                      assetsResult!.items!.remove(allAssets[index]);
+                                    });
+                                  } on Exception catch (e) {
+                                    alertBoxMoveBack(
+                                      context,
+                                      "Error",
+                                      e.toString(),
+                                    );
+                                  }
+                                },
+                                child: Text("Yes"),
+                              ),
+                            ],
+                          ),
+                        );
+
+                      }
+                      else{
+                        setState(() {
+                          newAssets.remove(allAssets[index]);
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.delete),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.red, // icon color
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -209,9 +278,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 request['price'] = price;
                 print(request);
 
-                 // Add selected assets to request
+                // Add selected assets to request
                 if (newAssets.isNotEmpty) {
-                  request['assets'] = newAssets.map((asset) => asset.toJson()).toList();
+                  request['assets'] = newAssets
+                      .map((asset) => asset.toJson())
+                      .toList();
                 }
 
                 print(widget.product!.productTypeId);
@@ -233,9 +304,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
                 request['price'] = price;
 
-                  // Add selected assets to request
+                // Add selected assets to request
                 if (newAssets.isNotEmpty) {
-                  request['assets'] = newAssets.map((asset) => asset.toJson()).toList();
+                  request['assets'] = newAssets
+                      .map((asset) => asset.toJson())
+                      .toList();
                 }
 
                 await _productProvider.insert(request);

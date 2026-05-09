@@ -21,6 +21,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   SearchResult<Product>? productResult;
 
   bool isLoading = true;
+  bool hasMore = true;
+  int page = 1;
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -33,7 +35,44 @@ class _ProductListScreenState extends State<ProductListScreen> {
     _cartProvider = context.read<CartProvider>();
 
     initData();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !isLoading &&
+          hasMore) {
+        addNextPageData();
+      }
+    });
   }
+
+  Future<void> addNextPageData() async {
+    try {
+      page++;
+
+      var data = await _productProvider.get(
+        filter: {
+          'page': page,
+          'name': _searchController.text,
+          'includeAssets': true,
+        },
+      );
+
+      if (data.items!.isEmpty) {
+        hasMore = false;
+        return;
+      }
+
+      setState(() {
+        productResult!.items!.addAll(data.items!);
+        isLoading = false;
+      });
+    } on Exception catch (e) {
+      alertBox(context, 'Error', e.toString());
+    }
+  }
+
+  final ScrollController _scrollController = ScrollController();
 
   Future<void> initData() async {
     try {
@@ -49,6 +88,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
     } on Exception catch (e) {
       alertBox(context, 'Error', e.toString());
     }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,6 +114,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
         child: GridView.builder(
+          controller: _scrollController,
           itemCount: productResult?.items?.length ?? 0,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,

@@ -1,5 +1,6 @@
 import 'package:ecommerce_desktop/screens/product_details_screen.dart';
 import 'package:ecommerce_desktop/screens/product_list.dart';
+import 'package:ecommerce_desktop/screens/review_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,11 +76,11 @@ class _MasterScreenState extends State<MasterScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.shopping_cart),
-              title: Text('Cart'),
+              leading: Icon(Icons.reviews),
+              title: Text('Reviews'),
               onTap: () {
                 // Handle Cart navigation
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> testScreen("Cart", "TODO add cart screen")));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ReviewList()));
               },
             ),
             ListTile(
