@@ -7,7 +7,7 @@ import '../models/product.dart';
 class CartProvider extends ChangeNotifier {
   Cart cart = Cart();
 
-  addToCart(Product product) {
+  addToCart(Product product, {int quantity = 1}) {
     print("adding to cart: ${product.name}");
 
     CartItem? cartItem = findCartItem(product);
@@ -16,7 +16,7 @@ class CartProvider extends ChangeNotifier {
     } else {
       cart.items.add(CartItem()
         ..product = product
-        ..quantity = 1);
+        ..quantity = quantity);
     }
 
     notifyListeners();

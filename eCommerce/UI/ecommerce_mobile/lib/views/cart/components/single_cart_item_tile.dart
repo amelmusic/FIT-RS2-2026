@@ -1,13 +1,32 @@
+import 'package:ecommerce_mobile/core/components/asset_image.dart';
+import 'package:ecommerce_mobile/core/components/base64_image.dart';
+import 'package:ecommerce_mobile/models/cart.dart';
+import 'package:ecommerce_mobile/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/components/network_image.dart';
 import '../../../core/constants/constants.dart';
 
-class SingleCartItemTile extends StatelessWidget {
-  const SingleCartItemTile({
-    super.key,
-  });
+class SingleCartItemTile extends StatefulWidget {
+  const SingleCartItemTile({super.key, required this.cartItem});
+
+  final CartItem cartItem;
+
+  @override
+  State<SingleCartItemTile> createState() => _SingleCartItemTileState();
+}
+
+class _SingleCartItemTileState extends State<SingleCartItemTile> {
+  late CartProvider _cartProvider;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _cartProvider = context.read<CartProvider>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +40,19 @@ class SingleCartItemTile extends StatelessWidget {
           Row(
             children: [
               /// Thumbnail
-              const SizedBox(
+              SizedBox(
                 width: 70,
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
-                  child: NetworkImageWithLoader(
-                    'https://i.imgur.com/4YEHvGc.png',
-                    fit: BoxFit.contain,
-                  ),
+                  child: widget.cartItem.product.assets.isNotEmpty
+                      ? Base64ImageWithLoader(
+                          widget.cartItem.product.assets[0].base64Content!,
+                          fit: BoxFit.contain,
+                        )
+                      : AssetImageWithLoader(
+                          'assets/images/product_placeholder.jpg',
+                          fit: BoxFit.contain,
+                        ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -43,14 +67,15 @@ class SingleCartItemTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Sulphurfree Bura',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(color: Colors.black),
+                          widget.cartItem.product.name ?? '',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(color: Colors.black),
                         ),
                         Text(
-                          '570 Ml',
+                          widget.cartItem.product.weight == null
+                              ? 'No wight speciifed'
+                              : 'Weight: ${widget.cartItem.product.weight!.toStringAsFixed(0)}',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -59,28 +84,36 @@ class SingleCartItemTile extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            widget.cartItem.quantity++;
+                          });
+                        },
                         icon: SvgPicture.asset(AppIcons.addQuantity),
                         constraints: const BoxConstraints(),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          '1',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+                          widget.cartItem.quantity.toString(),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            widget.cartItem.quantity--;
+                          });
+                        },
                         icon: SvgPicture.asset(AppIcons.removeQuantity),
                         constraints: const BoxConstraints(),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
               const Spacer(),
@@ -90,13 +123,16 @@ class SingleCartItemTile extends StatelessWidget {
                 children: [
                   IconButton(
                     constraints: const BoxConstraints(),
-                    onPressed: () {},
+                    onPressed: () {
+                      _cartProvider.removeFromCart(widget.cartItem.product);
+                      setState(() {});
+                    },
                     icon: SvgPicture.asset(AppIcons.delete),
                   ),
                   const SizedBox(height: 16),
                   const Text('\$20'),
                 ],
-              )
+              ),
             ],
           ),
           const Divider(thickness: 0.1),

@@ -12,8 +12,6 @@ import '../../models/search_result.dart';
 import '../../providers/product_provider.dart';
 import '../../utils/utils_widgets.dart';
 import 'components/ad_space.dart';
-import 'components/our_new_item.dart';
-import 'components/popular_packs.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

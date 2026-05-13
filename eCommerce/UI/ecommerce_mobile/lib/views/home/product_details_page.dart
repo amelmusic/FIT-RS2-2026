@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/components/app_back_button.dart';
 import '../../core/components/buy_now_row_button.dart';
@@ -7,6 +8,7 @@ import '../../core/components/product_images_slider.dart';
 import '../../core/components/review_row_button.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../models/product.dart';
+import '../../providers/cart_provider.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   const ProductDetailsPage({super.key, required this.product});
@@ -18,6 +20,16 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  late CartProvider _cartProvider;
+
+   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _cartProvider = context.read<CartProvider>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +41,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-          child: BuyNowRow(onBuyButtonTap: () {}, onCartButtonTap: () {}),
+          child: BuyNowRow(onBuyButtonTap: () {}, onCartButtonTap: () => _cartProvider.addToCart(widget.product)),
         ),
       ),
       body: SingleChildScrollView(
@@ -70,7 +82,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               child: PriceAndQuantityRow(
                 currentPrice: widget.product.price ?? 0,
                 orginalPrice: widget.product.price ?? 0,
-                quantity: 2,
+                quantity: 1,
               ),
             ),
             const SizedBox(height: 8),
