@@ -75,7 +75,7 @@ class _SingleCartItemTileState extends State<SingleCartItemTile> {
                         Text(
                           widget.cartItem.product.weight == null
                               ? 'No wight speciifed'
-                              : 'Weight: ${widget.cartItem.product.weight!.toStringAsFixed(0)}',
+                              : 'Weight: ${(widget.cartItem.product.weight! * widget.cartItem.quantity).toStringAsFixed(0)}',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -86,7 +86,7 @@ class _SingleCartItemTileState extends State<SingleCartItemTile> {
                       IconButton(
                         onPressed: () {
                           setState(() {
-                            widget.cartItem.quantity++;
+                            _cartProvider.incrementQuantity(widget.cartItem.product);
                           });
                         },
                         icon: SvgPicture.asset(AppIcons.addQuantity),
@@ -106,7 +106,7 @@ class _SingleCartItemTileState extends State<SingleCartItemTile> {
                       IconButton(
                         onPressed: () {
                           setState(() {
-                            widget.cartItem.quantity--;
+                            _cartProvider.decrementQuantity(widget.cartItem.product);
                           });
                         },
                         icon: SvgPicture.asset(AppIcons.removeQuantity),
@@ -130,7 +130,7 @@ class _SingleCartItemTileState extends State<SingleCartItemTile> {
                     icon: SvgPicture.asset(AppIcons.delete),
                   ),
                   const SizedBox(height: 16),
-                  const Text('\$20'),
+                  Text('\$${(widget.cartItem.product.price! * widget.cartItem.quantity).toStringAsFixed(2)}'),
                 ],
               ),
             ],

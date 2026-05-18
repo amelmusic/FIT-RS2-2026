@@ -1,10 +1,11 @@
+import 'package:ecommerce_mobile/core/components/dotted_divider.dart';
 import 'package:ecommerce_mobile/utils/utils_widgets.dart';
+import 'package:ecommerce_mobile/views/cart/components/item_row.dart';
 import 'package:ecommerce_mobile/views/cart/empty_cart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
-import '../../core/components/app_back_button.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/routes/app_routes.dart';
 import '../../providers/auth_provider.dart';
@@ -38,6 +39,13 @@ class _CartPageState extends State<CartPage> {
     return cart.cart.items.fold<double>(
       0,
       (sum, item) => sum + (item.product.price ?? 0) * item.quantity,
+    );
+  }
+
+   int _totalItems(CartProvider cart) {
+    return cart.cart.items.fold<int>(
+      0,
+      (sum, item) => sum + item.quantity,
     );
   }
 
@@ -133,7 +141,7 @@ class _CartPageState extends State<CartPage> {
                     for (final item in cartItems)
                       SingleCartItemTile(cartItem: item),
                     const CouponCodeField(),
-                    const ItemTotalsAndPrice(),
+                    _itemTotalsAndPrice(cartProvider),
                     SizedBox(
                       width: double.infinity,
                       child: Padding(
@@ -147,6 +155,21 @@ class _CartPageState extends State<CartPage> {
                   ],
                 ),
               ),
+      ),
+    );
+  }
+
+  Padding _itemTotalsAndPrice(CartProvider cartProvider) {
+    return Padding(
+      padding: EdgeInsets.all(AppDefaults.padding),
+      child: Column(
+        children: [
+          ItemRow(title: 'Total Item', value: '${_totalItems(cartProvider)}'),
+          ItemRow(title: 'Price', value: '\$ ${_subtotal(cartProvider).toStringAsFixed(2)}'),
+          ItemRow(title: 'Discount', value: '\$ 0.00'),
+          DottedDivider(),
+          ItemRow(title: 'Total Price', value: '\$ ${_subtotal(cartProvider).toStringAsFixed(2)}'),
+        ],
       ),
     );
   }

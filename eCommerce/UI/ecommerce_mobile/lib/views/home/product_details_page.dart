@@ -21,6 +21,7 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late CartProvider _cartProvider;
+  int _quantity = 1;
 
    @override
   void initState() {
@@ -41,7 +42,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-          child: BuyNowRow(onBuyButtonTap: () {}, onCartButtonTap: () => _cartProvider.addToCart(widget.product)),
+          child: BuyNowRow(onBuyButtonTap: () {}, onCartButtonTap: () => _cartProvider.addToCart(widget.product, quantity: _quantity)),
         ),
       ),
       body: SingleChildScrollView(
@@ -83,6 +84,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 currentPrice: widget.product.price ?? 0,
                 orginalPrice: widget.product.price ?? 0,
                 quantity: 1,
+                onQuantityChanged: (value) {
+                   setState(() {
+                    _quantity = value;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 8),

@@ -9,28 +9,42 @@ class PriceAndQuantityRow extends StatefulWidget {
     required this.currentPrice,
     required this.orginalPrice,
     required this.quantity,
+    this.onQuantityChanged
   });
 
   final double currentPrice;
   final double orginalPrice;
   final int quantity;
+  final ValueChanged<int>? onQuantityChanged;
 
   @override
   State<PriceAndQuantityRow> createState() => _PriceAndQuantityRowState();
 }
 
 class _PriceAndQuantityRowState extends State<PriceAndQuantityRow> {
-  int quantity = 1;
+  late int quantity = 1;
 
-  onQuantityIncrease() {
-    quantity++;
-    setState(() {});
+  void onQuantityIncrease() {
+    setState(() {
+      quantity++;
+    });
+    widget.onQuantityChanged?.call(quantity);
   }
 
   onQuantityDecrease() {
     if (quantity > 1) {
-      quantity--;
-      setState(() {});
+      setState(() {
+        quantity--;
+      });
+      widget.onQuantityChanged?.call(quantity);
+    }
+  }
+
+   @override
+  void didUpdateWidget(covariant PriceAndQuantityRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.quantity != oldWidget.quantity && widget.quantity != quantity) {
+      quantity = widget.quantity;
     }
   }
 

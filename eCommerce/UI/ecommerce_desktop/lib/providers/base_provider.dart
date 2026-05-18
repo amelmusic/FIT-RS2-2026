@@ -9,17 +9,21 @@ import 'package:http/http.dart';
 import '../utils/api_client_exception.dart';
 
 abstract class BaseProvider<T> with ChangeNotifier {
-  static String? _baseUrl;
-  String _endpoint = "";
+    static String? _baseUrl;
 
-  BaseProvider(String endpoint) {
-    _endpoint = endpoint;
+  static String? get baseUrl => _baseUrl;
+
+  /// API resource segment, e.g. `Products` → `{baseUrl}Products`.
+  final String endpoint;
+
+
+  BaseProvider(this.endpoint) {
     _baseUrl = const String.fromEnvironment("baseUrl",
         defaultValue: "http://localhost:5126/");
   }
 
   Future<SearchResult<T>> get({dynamic filter}) async {
-    var url = "$_baseUrl$_endpoint";
+    var url = "$_baseUrl$endpoint";
     if (filter != null) {
       var queryString = getQueryString(filter);
       url = "$url?$queryString";
@@ -47,7 +51,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<T> getById(int id) async {
-    var url = "$_baseUrl$_endpoint/$id";
+    var url = "$_baseUrl$endpoint/$id";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
@@ -62,7 +66,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<T> insert(dynamic request) async {
-    var url = "$_baseUrl$_endpoint";
+    var url = "$_baseUrl$endpoint";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
@@ -78,7 +82,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<T> update(int id, [dynamic request]) async {
-    var url = "$_baseUrl$_endpoint/$id";
+    var url = "$_baseUrl$endpoint/$id";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
@@ -94,7 +98,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future remove(int id) async {
-    var url = "$_baseUrl$_endpoint/$id";
+    var url = "$_baseUrl$endpoint/$id";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
