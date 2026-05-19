@@ -40,13 +40,13 @@ class OrderPreviewTile extends StatelessWidget {
                     const Text('Order ID:'),
                     const SizedBox(width: 5),
                     Text(
-                      '2324252627',
+                      orderID,
                       style: Theme.of(
                         context,
                       ).textTheme.bodyLarge?.copyWith(color: Colors.black),
                     ),
                     const Spacer(),
-                    const Text('25 Nov'),
+                    Text(date),
                   ],
                 ),
                 Row(

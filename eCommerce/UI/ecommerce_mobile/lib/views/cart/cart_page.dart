@@ -13,7 +13,6 @@ import '../../providers/cart_provider.dart';
 import '../../providers/order_provider.dart';
 import '../../utils/api_client_exception.dart';
 import 'components/coupon_code_field.dart';
-import 'components/items_totals_price.dart';
 import 'components/single_cart_item_tile.dart';
 
 class CartPage extends StatefulWidget {
@@ -95,7 +94,7 @@ class _CartPageState extends State<CartPage> {
       final paymentIntentId = intentData['clientSecret']!
           .split('_secret_')
           .first;
-      final order = await orderProvider.checkout(
+      await orderProvider.checkout(
         payload,
         paymentIntentId: paymentIntentId,
       );

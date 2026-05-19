@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
 
 class TotalAmountAndPaidData extends StatelessWidget {
+  final double totalAmount;
+
   const TotalAmountAndPaidData({
     super.key,
+    required this.totalAmount
   });
 
   @override
@@ -22,23 +25,7 @@ class TotalAmountAndPaidData extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '\$120',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Text(
-                'Paid From',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-              const Spacer(),
-              Text(
-                'Credit Card',
+                '\$${totalAmount.toStringAsFixed(2)}',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold, color: Colors.black),
               ),

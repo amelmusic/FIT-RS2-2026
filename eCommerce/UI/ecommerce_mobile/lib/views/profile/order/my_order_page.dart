@@ -21,9 +21,9 @@ class AllOrderPage extends StatelessWidget {
           bottom: const TabBar(
             physics: NeverScrollableScrollPhysics(),
             tabs: [
-              CustomTabLabel(label: 'All', value: '(58)'),
-              CustomTabLabel(label: 'Running', value: '(14)'),
-              CustomTabLabel(label: 'Previous', value: '(44)'),
+              CustomTabLabel(label: 'All', value:''),
+              CustomTabLabel(label: 'Proccesing', value: ''),
+              CustomTabLabel(label: 'Devlivered', value: ''),
             ],
           ),
         ),

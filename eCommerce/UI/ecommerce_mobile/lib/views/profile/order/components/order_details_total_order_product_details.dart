@@ -1,11 +1,15 @@
+import 'package:ecommerce_mobile/models/order_item.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/constants.dart';
 import 'order_details_product_tile.dart';
 
 class TotalOrderProductDetails extends StatelessWidget {
+  final List<OrderItem> orderItems;
+
   const TotalOrderProductDetails({
     super.key,
+    required this.orderItems
   });
 
   @override
@@ -28,12 +32,13 @@ class TotalOrderProductDetails extends StatelessWidget {
           const SizedBox(height: 8),
           ListView.separated(
             itemBuilder: (context, index) {
-              return OrderDetailsProductTile(data: Dummy.products[index]);
+              var orderItem = orderItems[index];
+              return OrderDetailsProductTile(orderItem: orderItem);
             },
             separatorBuilder: (context, index) => const Divider(
               thickness: 0.2,
             ),
-            itemCount: 3,
+            itemCount: orderItems.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
           ),

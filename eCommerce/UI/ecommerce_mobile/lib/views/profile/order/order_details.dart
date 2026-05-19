@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../core/components/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_defaults.dart';
-import 'components/order_details_statuses.dart';
+import '../../../models/order.dart';
 import 'components/order_details_total_amount_and_paid.dart';
 import 'components/order_details_total_order_product_details.dart';
 
 class OrderDetailsPage extends StatelessWidget {
-  const OrderDetailsPage({super.key});
+  final Order order;
+
+  const OrderDetailsPage({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +33,13 @@ class OrderDetailsPage extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Order id #30398505202',
+                 order.orderNumber,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
-              const SizedBox(height: AppDefaults.padding),
-              const OrderStatusColumn(),
-              const TotalOrderProductDetails(),
-              const TotalAmountAndPaidData(),
+              TotalOrderProductDetails(orderItems: order.orderItems),
+              TotalAmountAndPaidData(totalAmount: order.totalAmount),
             ],
           ),
         ),

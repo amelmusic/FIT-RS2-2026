@@ -1,28 +1,60 @@
+import 'package:ecommerce_mobile/models/order_item.dart';
+import 'package:ecommerce_mobile/providers/product_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../../core/components/network_image.dart';
-import '../../../../core/models/dummy_product_model.dart';
+import '../../../../core/components/asset_image.dart';
+import '../../../../core/components/base64_image.dart';
+import '../../../../models/product.dart';
 
-class OrderDetailsProductTile extends StatelessWidget {
-  const OrderDetailsProductTile({
-    super.key,
-    required this.data,
-  });
+class OrderDetailsProductTile extends StatefulWidget {
+  final OrderItem orderItem;
 
-  final ProductModel data;
+  const OrderDetailsProductTile({super.key, required this.orderItem});
+
+  @override
+  State<OrderDetailsProductTile> createState() =>
+      _OrderDetailsProductTileState();
+}
+
+class _OrderDetailsProductTileState extends State<OrderDetailsProductTile> {
+  late ProductProvider _productProvider;
+  bool isLoading = true;
+
+  late Product product;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _productProvider = context.read<ProductProvider>();
+
+    getProduct();
+
+    
+  }
+
+  Future<void> getProduct() async{
+      var productData = await _productProvider.getById(widget.orderItem.productId);
+
+      setState(() {
+        product = productData;
+        isLoading = false;
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return isLoading ? CircularProgressIndicator() : Row(
       children: [
         SizedBox(
           height: 80,
           child: AspectRatio(
             aspectRatio: 1 / 1,
-            child: NetworkImageWithLoader(
-              data.cover,
-              fit: BoxFit.contain,
-            ),
+            child: product.assets.isNotEmpty
+                ? Base64ImageWithLoader(product.assets[0].base64Content ?? '')
+                : AssetImageWithLoader('assets/images/product_placeholder.jpg'),
           ),
         ),
         const SizedBox(width: 16),
@@ -31,14 +63,18 @@ class OrderDetailsProductTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                data.name,
+                product.name ?? '',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      // fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  // fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
               const SizedBox(height: 8),
-              Text(data.weight)
+              Text(
+                product.weight != null
+                    ? product.weight!.toStringAsFixed(0)
+                    : "No weight",
+              ),
             ],
           ),
         ),
@@ -46,16 +82,13 @@ class OrderDetailsProductTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '\$${data.price.toInt()}',
+              '\$${product.price!.toStringAsFixed(0)}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
-            Text(
-              '3x',
-              style: Theme.of(context).textTheme.bodySmall,
-            )
+            Text('${widget.orderItem.quantity}x', style: Theme.of(context).textTheme.bodySmall),
           ],
-        )
+        ),
       ],
     );
   }
