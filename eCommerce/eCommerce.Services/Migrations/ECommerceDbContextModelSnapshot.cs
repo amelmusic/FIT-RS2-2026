@@ -846,6 +846,32 @@ namespace eCommerce.Services.Migrations
                         });
                 });
 
+            modelBuilder.Entity("eCommerce.Services.Database.ProductRecommendation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecommendedProductId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Score")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("RecommendedProductId");
+
+                    b.ToTable("ProductRecommendations");
+                });
+
             modelBuilder.Entity("eCommerce.Services.Database.ProductReview", b =>
                 {
                     b.Property<int>("Id")
@@ -1201,6 +1227,42 @@ namespace eCommerce.Services.Migrations
                             PasswordHash = "Ov4LxpWKXXV9dwMYvBgqODdzIt0=",
                             PasswordSalt = "KtWF6g7SemBqs4nVWV4Ziw==",
                             Username = "customer2"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "customer3@gmail.com",
+                            FirstName = "Frank",
+                            IsActive = true,
+                            LastName = "Customer",
+                            PasswordHash = "Ov4LxpWKXXV9dwMYvBgqODdzIt0=",
+                            PasswordSalt = "KtWF6g7SemBqs4nVWV4Ziw==",
+                            Username = "customer3"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "customer4@gmail.com",
+                            FirstName = "Grace",
+                            IsActive = true,
+                            LastName = "Customer",
+                            PasswordHash = "Ov4LxpWKXXV9dwMYvBgqODdzIt0=",
+                            PasswordSalt = "KtWF6g7SemBqs4nVWV4Ziw==",
+                            Username = "customer4"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "customer5@gmail.com",
+                            FirstName = "Hank",
+                            IsActive = true,
+                            LastName = "Customer",
+                            PasswordHash = "Ov4LxpWKXXV9dwMYvBgqODdzIt0=",
+                            PasswordSalt = "KtWF6g7SemBqs4nVWV4Ziw==",
+                            Username = "customer5"
                         });
                 });
 
@@ -1264,6 +1326,27 @@ namespace eCommerce.Services.Migrations
                             DateAssigned = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Utc),
                             RoleId = 2,
                             UserId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DateAssigned = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 2,
+                            UserId = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DateAssigned = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 2,
+                            UserId = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            DateAssigned = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 2,
+                            UserId = 8
                         });
                 });
 
@@ -1387,6 +1470,25 @@ namespace eCommerce.Services.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("eCommerce.Services.Database.ProductRecommendation", b =>
+                {
+                    b.HasOne("eCommerce.Services.Database.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("eCommerce.Services.Database.Product", "RecommendedProduct")
+                        .WithMany()
+                        .HasForeignKey("RecommendedProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("RecommendedProduct");
                 });
 
             modelBuilder.Entity("eCommerce.Services.Database.ProductReview", b =>
