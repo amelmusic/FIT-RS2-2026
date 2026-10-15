@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../main.dart';
 import '../providers/auth_provider.dart';
+import '../screens/ai_chat_screen.dart';
 import '../screens/category_list.dart';
 import '../screens/user_list.dart';
 import '../utils/utils_widgets.dart';
@@ -90,6 +91,14 @@ class _MasterScreenState extends State<MasterScreen> {
               onTap: () {
                 // Handle Cart navigation
                 Navigator.push(context, MaterialPageRoute(builder: (context)=> CuponList()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.chat),
+              title: Text('AI Assistant'),
+              onTap: () {
+                // Handle Cart navigation
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> AiChatScreen()));
               },
             ),
             ListTile(
